@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import { sendEmail } from '../middleware/sendEmail.js';
 
 dotenv.config();
 
@@ -26,16 +27,28 @@ export const signup = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 15 * 60 * 1000);// OTP expires in 15 minutes
 
         const newUser = new User({
             email, 
             username: name,
-            password: hashedPassword
+            password: hashedPassword,
+            verifyEmailOtp: otp,
+            verifyEmailOtpExpiresAt: expiresAt
         });
 
         await newUser.save();
+        const {password : pass, verifyEmailOtp, verifyEmailOtpExpiresAt, ...userData} = newUser._doc;
 
-        const {password : pass, ...userData} = newUser._doc;
+        const data = {
+            email: newUser.email,
+            subject: 'Email Verification Request',
+            message: `Please verify your email address using the following OTP: ${otp}. This OTP will expire in 15 minutes.`,
+        
+        };
+
+        await sendEmail(data);
         res.status(201).json({ success: true, message: 'User created successfully', user: userData });
 
     } 
@@ -64,6 +77,29 @@ export const login = async (req, res) => {
             return res.status(400).json({ success : false, message: 'Invalid credentials' });
         }
 
+        if(!existUser.isVerified) {
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            const expiresAt = new Date(Date.now() + 15 * 60 * 1000);// OTP expires in 15 minutes
+            existUser.verifyEmailOtp = otp;
+            existUser.verifyEmailOtpExpiresAt = expiresAt;
+
+            await existUser.save();
+
+            const data = {
+            email: existUser.email,
+            subject: 'Email Verification Request',
+            message: `Please verify your email address using the following OTP: ${otp}. This OTP will expire in 15 minutes.`,
+            };
+
+            await sendEmail(data);
+
+            return res.status(403).json({
+                success : false, 
+                message: 'Email not verified. A new OTP has been sent to your email address for verification.'
+            })
+
+        }
+
         const token = jwt.sign(
             { id: existUser._id }, 
             process.env.JWT_SECRET,  
@@ -76,7 +112,7 @@ export const login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000 
         }); 
 
-        const { password: pass, ...userData } = existUser.toObject();
+        const { password: pass, verifyEmailOtp, verifyEmailOtpExpiresAt, ...userData } = existUser.toObject();
         res.status(200).json({ success: true, message: 'Login successful', user: userData });
     } 
     catch (error) {
@@ -125,5 +161,35 @@ export const getAllUsers = async (req, res) => {
     }
     catch (error) {
         res.status(500).json({ success : false, message: 'Failed to fetch users', error: error.message });
+    }
+};
+
+export const emailVerification = async (req, res) => {
+    try {
+        const {otp} = req.body;
+
+        if(!otp) {
+            return res.status(400).json({ success : false, message: 'OTP is required' });
+        }
+        
+        const existUser = await User.findOne({ verifyEmailOtp: otp });
+
+        if(!existUser) {
+            return res.status(400).json({ success : false, message: 'Invalid OTP' });
+        }
+
+        if(existUser.verifyEmailOtp !== otp || existUser.verifyEmailOtpExpiresAt < new Date()) {
+            return res.status(400).json({ success : false, message: 'OTP is invalid or has expired' });
+        }
+
+        existUser.isVerified = true;
+        existUser.verifyEmailOtp = null;
+        existUser.verifyEmailOtpExpiresAt = null;
+        await existUser.save();
+
+        res.status(200).json({ success: true, message: 'Email verified successfully' });
+    } 
+    catch (error) {
+        res.status(500).json({ success : false, message: 'Email verification failed', error: error.message });
     }
 };
