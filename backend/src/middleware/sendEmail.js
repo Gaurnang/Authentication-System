@@ -20,7 +20,6 @@ export const sendEmail = async(data) => {
         to : data.email,
         subject : data.subject,
         text : data.message,
-        html : data.html || data.message
     };
     await transporter.sendMail(mailOptions);
     return true;    
