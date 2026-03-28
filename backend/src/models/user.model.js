@@ -3,8 +3,7 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     email: { 
         type: String, 
@@ -23,7 +22,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    verifyEmailOtpExpiry : {
+    verifyEmailOtpExpiresAt : {
         type: Date,
         default: null
     },
@@ -36,5 +35,7 @@ const userSchema = new mongoose.Schema({
         default: null
     }
 }, { timestamps: true });
+
+userSchema.index({ email: 1 }, { unique: true });
 
 export default mongoose.model('User', userSchema);
