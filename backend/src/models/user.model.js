@@ -10,9 +10,9 @@ const userSchema = new mongoose.Schema({
         required: true, 
         unique: true 
     },
-    password: { 
-        type: String, 
-        required: true 
+    password: {
+        type: String,
+        default: null,
     },
     isVerified : {
         type: Boolean,
@@ -33,9 +33,16 @@ const userSchema = new mongoose.Schema({
     resetPasswordOtpExpiry : {
         type: Date,
         default: null
+    },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user',
+    },
+    refreshToken: {
+        type: String,
+        default: null
     }
 }, { timestamps: true });
-
-userSchema.index({ email: 1 }, { unique: true });
 
 export default mongoose.model('User', userSchema);

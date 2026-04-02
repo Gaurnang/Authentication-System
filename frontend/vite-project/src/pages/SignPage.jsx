@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { api } from '../lib/api';
-
 export default function SignPage() {
   const navigate = useNavigate();
   const [name, setName] = useState('');
@@ -35,8 +34,9 @@ export default function SignPage() {
     <div className="mx-auto max-w-md rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
       <h1 className="text-xl font-semibold text-slate-900">Create account</h1>
       <p className="mt-1 text-sm text-slate-600">
-        You will receive a 6-digit code by email to verify your address.
+        Register with email — we will send a verification code.
       </p>
+
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-slate-700">

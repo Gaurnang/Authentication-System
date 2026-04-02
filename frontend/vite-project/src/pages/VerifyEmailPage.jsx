@@ -6,7 +6,6 @@ import { api } from '../lib/api';
 export default function VerifyEmailPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const emailHint = location.state?.emailHint;
   const [otp, setOtp] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -37,14 +36,7 @@ export default function VerifyEmailPage() {
     <div className="mx-auto max-w-md rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
       <h1 className="text-xl font-semibold text-slate-900">Verify email</h1>
       <p className="mt-1 text-sm text-slate-600">
-        Enter the 6-digit code sent to your inbox
-        {emailHint ? (
-          <>
-            {' '}
-            (<span className="font-mono text-slate-800">{emailHint}</span>)
-          </>
-        ) : null}
-        .
+        Enter the 6-digit code sent to your inbox 
       </p>
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>

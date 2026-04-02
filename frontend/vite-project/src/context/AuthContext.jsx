@@ -40,6 +40,7 @@ export function AuthProvider({ children }) {
       refreshUser,
       logout,
       isAuthenticated: Boolean(user),
+      isAdmin: user?.role === 'admin',
     }),
     [user, loading, refreshUser, logout]
   );

@@ -1,22 +1,21 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { connectDB } from './utils/db.js';
 import userRoutes from './routes/user.auth.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 
-const coresOptions = {
-    origin: [process.env.FRONTEND_URL],
+app.use(cors({
+    origin: "*",
     credentials: true,
-};
+}));
 
-app.use(cors(coresOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));

@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -20,13 +20,20 @@ export default function Navbar() {
           <Link to="/" className="text-slate-600 hover:text-slate-900">
             Home
           </Link>
-          <Link to="/users" className="text-slate-600 hover:text-slate-900">
-            Users
-          </Link>
+          {isAuthenticated && isAdmin ? (
+            <Link to="/users" className="text-slate-600 hover:text-slate-900">
+              Users
+            </Link>
+          ) : null}
           {isAuthenticated ? (
             <>
               <span className="hidden text-slate-500 sm:inline">
                 {user?.username ?? user?.email}
+                {isAdmin ? (
+                  <span className="ml-1 rounded bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-900">
+                    Admin
+                  </span>
+                ) : null}
               </span>
               <Link to="/profile" className="text-slate-600 hover:text-slate-900">
                 Profile

@@ -2,21 +2,32 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function HomePage() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, isAdmin, user } = useAuth();
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
       <h1 className="text-2xl font-semibold text-slate-900">Authentication system</h1>
       {isAuthenticated ? (
         <p className="mt-4 text-slate-700">
-          Signed in as <span className="font-medium">{user?.username ?? user?.email}</span>. Open{' '}
+          Signed in as <span className="font-medium">{user?.username ?? user?.email}</span>
+          {isAdmin ? (
+            <span className="ml-2 rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900">
+              Admin
+            </span>
+          ) : null}
+          . Open{' '}
           <Link to="/profile" className="text-slate-900 underline">
             Profile
-          </Link>{' '}
-          or{' '}
-          <Link to="/users" className="text-slate-900 underline">
-            Users
           </Link>
+          {isAdmin ? (
+            <>
+              {' '}
+              or{' '}
+              <Link to="/users" className="text-slate-900 underline">
+                Users
+              </Link>
+            </>
+          ) : null}
           .
         </p>
       ) : (

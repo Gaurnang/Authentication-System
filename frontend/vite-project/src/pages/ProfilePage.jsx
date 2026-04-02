@@ -21,6 +21,10 @@ export default function ProfilePage() {
           <dd className="font-medium text-slate-900">{user.email}</dd>
         </div>
         <div className="flex justify-between gap-4 border-b border-slate-100 pb-2">
+          <dt className="text-slate-500">Role</dt>
+          <dd className="font-medium text-slate-900 capitalize">{user.role ?? 'user'}</dd>
+        </div>
+        <div className="flex justify-between gap-4 border-b border-slate-100 pb-2">
           <dt className="text-slate-500">Verified</dt>
           <dd className="font-medium text-slate-900">{user.isVerified ? 'Yes' : 'No'}</dd>
         </div>

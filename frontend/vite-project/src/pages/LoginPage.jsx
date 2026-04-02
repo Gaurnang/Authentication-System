@@ -3,7 +3,6 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
-
 export default function LoginPage() {
   const navigate = useNavigate();
   const { setUser } = useAuth();
@@ -143,9 +142,7 @@ export default function LoginPage() {
   return (
     <div className="mx-auto max-w-md rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
       <h1 className="text-xl font-semibold text-slate-900">Log in</h1>
-      <p className="mt-1 text-sm text-slate-600">
-        Enter your account email and password to continue.
-      </p>
+      <p className="mt-1 text-sm text-slate-600">Sign in with your email and password.</p>
 
       <form onSubmit={handleLoginSubmit} className="mt-6 space-y-4">
         <div>
