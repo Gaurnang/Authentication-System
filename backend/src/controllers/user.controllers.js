@@ -375,7 +375,7 @@ export const resetPassword = async (req, res) => {
 
 export const refreshAccessToken = async (req, res) => {
     try {
-        const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+        const incomingRefreshToken = req.cookies.refreshToken;
 
         if (!incomingRefreshToken) {
             return res.status(401).json({ success: false, message: 'Unauthorized request' });
